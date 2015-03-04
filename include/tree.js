@@ -58,11 +58,52 @@ var showFolderFileList = function(folderspec)
 }
 var refreshTreeView = function()
 {
-    var s = showFolderFileList(".");
-    $("#treeViewArea").html(s);
+    var fso = new ActiveXObject("Scripting.FileSystemObject");
+    var dir = fso.GetFolder(".");
+    var file = new Enumerator(dir.files);
+    var nodes = [];
+    var isChild = [];
+    var dfs = function(node) {
+        //alert(JSON.stringify(node));
+        /* readonly as ascii */
+        var textFile = fso.OpenTextFile(node.id, 1, true, 0);
+        while(!textFile.AtEndOfStream) {
+            /* line by line */
+            var line = textFile.readLine();
+            /* match input or include (or includegraphics??) */
+            /* TODO?: support comment-out handling */
+            var inputRe = /\\input\{(.+?)\}|\\include\{(.+?)\}/g;
+            var match = inputRe.exec(line);
+            if (null === match) { /* not hit */
+                continue;
+            }
+            match.splice(0,1); /* first element is whole matching string so remove it */
+            match = $.grep(match, function(n) {return(n);}); /* erase undefined elements */
 
-    // bind event and action
-    $(".treeViewFile .filename").each(function(i){
-        $(this).on("click", function(){openExternally($(this).attr("name")); return(false);});
+            /* create new child node */
+            var child = {id: match[0], text: match[0], children: [], state: {opened: true}};            
+            isChild[match[0]] = true;
+
+            dfs(child);
+            node.children.push(child);
+        }
+    }
+    for (; !file.atEnd(); file.moveNext())
+    {
+        /* ignore files without .tex extension */
+        if (-1 == file.item().name.search(/\.tex$/)) {
+            continue;
+        }
+
+        /* create new node of jstree */
+        var node = {id: file.item().name, text: file.item().name, children: [], state: {opened: true}};
+        dfs(node);
+        nodes.push(node);
+    }
+    /* erase children nodes from root */
+    nodes = $.grep(nodes, function(node) {return(undefined === isChild[node.id]);});
+    
+    $('#treeViewArea').jstree({core: { data: nodes}}).on("select_node.jstree", function(e, data){
+        openExternally(data.node.text);
     });
 }
