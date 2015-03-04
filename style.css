@@ -1,0 +1,23 @@
+body {
+    margin: 1px;
+}
+#controlPanel {
+    padding: 3px 3px;
+    border: solid 1px;
+    background-color: lightgray;
+}
+
+#tabControl { margin: 15px 25px; }
+
+.controlPanelTabs { margin: 3px 3px; }
+
+.treeViewFile .filename {
+    display: inline-block;
+    position: relative;
+}
+.treeViewFile .filename:hover {
+    font-weight: bold;
+}
+div#complileOption div, div#ping div{
+    margin-bottom: 10px;
+}

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>tex index</title>
+<hta:application navigable="yes">
+
+<link rel="stylesheet" type="text/css"  href="jquery-ui-1.11.3.custom\jquery-ui.min.css"></script>
+<link rel="stylesheet" type="text/css" href="style.css"></script>
+<script type="text/javascript" src="jquery-ui-1.11.3.custom\external\jquery\jquery.js"></script>
+<script type="text/javascript" src="jquery-ui-1.11.3.custom\jquery-ui.min.js"></script>
+<script type="text/javascript" src="base.js"></script>
+<script type="text/javascript" src="ping.js"></script>
+<script type="text/javascript" src="tree.js"></script>
+</head>
+<body>
+<div id="controlPanel">
+    <input class="controlPanelTabs" type="button" value="Home">
+    <input class="controlPanelTabs" type="button" value="Tree View">
+    <input class="controlPanelTabs" type="button" value="Compile">
+    <input class="controlPanelTabs" type="button" value="Version Control">
+    <input class="controlPanelTabs" type="button" value="Gallery">
+    <input class="controlPanelTabs" type="button" value="Labels">
+    <input class="controlPanelTabs" type="button" value="Information">
+</div>
+<div id="tabControl">
+    <div class="tabContents" id="ping">
+        <p>(!) this tab is a test to run command line program from hta and jscript. ping for example.</p>
+        <form name="form1">
+            <div>
+                <label> ip address or server name: </label>
+                <input type="text" name="ipaddr" value="127.0.0.1" />
+            </div>
+            <div cleass=time>
+                <label> request data sending time: </label>
+                <input type="radio" name="rd" value="1"/>1
+                <input type="radio" name="rd" value="2" checked />2
+                <input type="radio" name="rd" value="3"/>3
+            </div>
+            <div>
+                <label> send packet size: </label>
+                <select name="pacsize">
+                    <option value="16" selected>16
+                    <option value="32">32
+                    <option value="64">64
+                </select> bytes
+            </div>
+            <div>
+                <input type="button" value="ping" />
+            </div>
+            <div>
+                <textarea name="kekka" cols="80" rows="15">terminal</textarea>
+            </div>
+            <div>
+                <input type="reset" value="default"/>
+            </div>
+        </form>
+    </div>
+
+    <div class="tabContents" id="treeView">
+        <label id="editor">editor</label>
+        <select name="editor">
+            <option selected> gvim
+            <option> emacs
+            <option> notepad
+        </select><br>
+        <div id="treeViewArea"></div>
+    </div>
+
+    <div class="tabContents" id="complile">
+        <p>(!) this tab may not be necessary. only to compose well-working makefile is requested.</p>
+        <form name="make">
+            <div class="target">
+                <label> target: </label>
+                <input type="radio" name="target" value="dvi" checked/>dvi
+                <input type="radio" name="target" value="pdf"/>pdf
+                <input type="radio" name="target" value="clean"/>clean
+            </div>
+            <div class="parallel">
+                <label> parallel: </label>
+                <input type="text" name="parallel" value="4"/>
+            </div>
+            <div class="open">
+                <label> open after compilation? </label>
+                <input type="checkbox" name="open">
+            </div>
+            <div class="mode">
+                <label> mode: </label>
+                <select name="mode">
+                    <option selected> draft
+                    <option> conference
+                    <option> journal
+                </select>
+            </div>
+            <div>
+                <input type="button" value="make"/>
+            </div>
+            <div>
+                <input type="reset" value="default"/>
+            </div>
+        </form>
+    </div>
+    <div class="tabContents" id="versionControl">
+        <p>(!) this tab may not be necessary. she is willing to learn git.</p>
+    </div>
+    <div class="tabContents" id="gallery">
+        <p>(!) preview of .odt, .pdf, .eps etc. difficult to implement in this component.</p>
+    </div>
+    <div class="tabContents" id="labels">
+        <p>(!) just list up defined labels in the .tex files.</p>
+    </div>
+    <div class="tabContents" id="information">
+        <p>some information here.</p>
+    </div>
+</div>
+</body>
+</html>
