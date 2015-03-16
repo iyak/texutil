@@ -4,14 +4,14 @@
 <title>tex index</title>
 <hta:application navigable="yes">
 
-<link rel="stylesheet" type="text/css" href="include\style.css"></script>
-<script type="text/javascript" src="include\jquery.js"></script>
-<link rel="stylesheet" href="include\dist/themes/default/style.min.css" />
-<script type="text/javascript" src="include\dist/jstree.min.js"></script>
-<script type="text/javascript" src="include\json2.js"></script>
-<script type="text/javascript" src="include\base.js"></script>
-<script type="text/javascript" src="include\ping.js"></script>
-<script type="text/javascript" src="include\tree.js"></script>
+<link rel="stylesheet" type="text/css" href="style.css"></script>
+<script type="text/javascript" src="jquery.js"></script>
+<link rel="stylesheet" href="dist/themes/default/style.min.css" />
+<script type="text/javascript" src="dist/jstree.min.js"></script>
+<script type="text/javascript" src="json2.js"></script>
+<script type="text/javascript" src="base.js"></script>
+<script type="text/javascript" src="ping.js"></script>
+<script type="text/javascript" src="tree.js"></script>
 </head>
 <body>
 <div id="controlPanel">
@@ -24,37 +24,7 @@
     <input class="controlPanelTabs" type="button" value="Information">
 </div>
 <div id="tabControl">
-    <div class="tabContents" id="ping">
-        <p>(!) this tab is a test to run command line program from hta and jscript. ping for example.</p>
-        <form name="form1">
-            <div>
-                <label> ip address or server name: </label>
-                <input type="text" name="ipaddr" value="127.0.0.1" />
-            </div>
-            <div cleass=time>
-                <label> request data sending time: </label>
-                <input type="radio" name="rd" value="1"/>1
-                <input type="radio" name="rd" value="2" checked />2
-                <input type="radio" name="rd" value="3"/>3
-            </div>
-            <div>
-                <label> send packet size: </label>
-                <select name="pacsize">
-                    <option value="16" selected>16
-                    <option value="32">32
-                    <option value="64">64
-                </select> bytes
-            </div>
-            <div>
-                <input type="button" value="ping" />
-            </div>
-            <div>
-                <textarea name="kekka" cols="80" rows="15">terminal</textarea>
-            </div>
-            <div>
-                <input type="reset" value="default"/>
-            </div>
-        </form>
+    <div class="tabContents" id="home">
     </div>
 
     <div class="tabContents" id="treeView">

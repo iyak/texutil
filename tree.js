@@ -35,7 +35,7 @@ var refreshTreeView = function()
      * node.children = array of children nodes.
      */
     var fso = new ActiveXObject("Scripting.FileSystemObject");
-    var workingDir = fso.getFolder(".");
+    var workingDir = fso.getFolder(workdir);
 
     /* get array of all tex files under the working directory */
     var fileObjArray = [];
@@ -43,7 +43,10 @@ var refreshTreeView = function()
         var fileCollector = new Enumerator(folderObj.files);
         for (; !fileCollector.atEnd(); fileCollector.moveNext()) {
             var fileObj = fileCollector.item();
-            if (-1 == fileObj.name.search(/\.tex$/)) { /* ignore non-tex files */
+            if ("tex" != fso.GetExtensionName(fileObj.path)) { /* ignore non-tex files */
+                /* latex read files without .tex if it is included from or inputed from 
+                 * some other .tex files. Exclusion here does not conflict with this spec.
+                 */
                 continue;
             }
             array.push(fileObj);
@@ -60,9 +63,12 @@ var refreshTreeView = function()
     var nodes = [];
     var isChild = [];
     var dfsTexDependency = function(fileObj) {
+         /* ERROR: if dependency conteins loop, this recursion would be endless. */
+
         /* readonly as ascii */
         var textFile = fso.OpenTextFile(fileObj.path, 1/* readonly */, false/* create? */, 0/* ascii */);
         var node = {id: fileObj.path, text: fileObj.name, children: [], state: {opened: true}};
+        var hasSibling = []
         while(!textFile.atEndOfStream) {
             /* read line by line */
             var line = textFile.readLine();
@@ -73,7 +79,7 @@ var refreshTreeView = function()
             var includeRegexp = /\\include *\{ *(.+?) *\}/g;
             if (undefined != (child = inputRegexp.exec(line)/* [0] is whole matched string */)) {
                 child = child[1];
-                if (-1 == child.search(/\.tex$/)) { /* input{} allows for extension to be missed */
+                if ("" == fso.GetExtensionName(child)) { /* input{} allows extension be missed */
                     child = child + ".tex";
                 }
             }
@@ -83,10 +89,17 @@ var refreshTreeView = function()
             else { /* nothing hit */
                 continue;
             }
-            childObj = fso.getFile(fileObj.ParentFolder.path + "/" + child);
-            alert(childObj.path);
-            isChild[childObj.path] = true;
-            node.children.push(dfsTexDependency(childObj));
+            var childPath = fileObj.ParentFolder.path + "/" + child;
+            if (fso.FileExists(childPath)) {
+                childObj = fso.getFile(childPath);
+                if (undefined === hasSibling[childObj.path]) {
+                    hasSibling[childObj.path]= true;
+                    isChild[childObj.path] = true;
+                    node.children.push(dfsTexDependency(childObj));
+                }
+                else { /* do nothing */ }
+            }
+            else { /* do nothing -- should I alert? */ }
         }
         return(node);
     }
@@ -97,7 +110,8 @@ var refreshTreeView = function()
     nodes = $.grep(nodes, function(node) {return(undefined === isChild[node.id]);});
     
     /* pass node information to jstree */
-    $('#treeViewArea').jstree({core: { data: nodes}}).on("select_node.jstree", function(e, data){
-        openExternally(data.node.id);
-    });
+    $('#treeViewArea').on("activate_node.jstree", function(e, data){
+            openExternally(data.node.id);
+        })
+    .jstree({core: {multiple: false, data: nodes}});
 }

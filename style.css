@@ -6,11 +6,13 @@ body {
     border: solid 1px;
     background-color: lightgray;
 }
-
-#tabControl { margin: 15px 25px; }
-
 .controlPanelTabs { margin: 3px 3px; }
 
+#tabControl { margin: 15px 25px;}
+#workdir {
+    width: 100%;
+    height: 500px;
+}
 .treeViewFile .filename {
     display: inline-block;
     position: relative;
