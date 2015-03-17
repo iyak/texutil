@@ -106,12 +106,9 @@ var refreshTreeView = function()
     for (var i = 0; i < fileObjArray.length; ++ i) {
         nodes.push(dfsTexDependency(fileObjArray[i]));
     }
-    /* erase children nodes from root */
+    /* erase from root the nodes which are children of some other nodes */
     nodes = $.grep(nodes, function(node) {return(undefined === isChild[node.id]);});
     
     /* pass node information to jstree */
-    $('#treeViewArea').on("activate_node.jstree", function(e, data){
-            openExternally(data.node.id);
-        })
-    .jstree({core: {multiple: false, data: nodes}});
+    $('#treeViewArea').jstree({core: {multiple: false, data: nodes}});
 }

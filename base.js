@@ -25,7 +25,10 @@ $(function() {
         $(this).on("click", function(){activateTab(i); return(false);});
     });
     $("input[value='ping']").on("click", function(){goPing(); return(false);});
-    $("#treeView").bind("beforeShow", function(){refreshTreeView(); return(false);});
+    $("#treeView").on("beforeShow", function(){refreshTreeView(); return(false);});
+    $('#treeViewArea').on("activate_node.jstree", function(e, data){
+        openExternally(data.node.id);
+    });
 });
 
 /* jQuery extension */
