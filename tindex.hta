@@ -25,15 +25,26 @@
 </div>
 <div id="tabControl">
     <div class="tabContents" id="home">
+        <div>
+            <label>working directory: </label>
+            <input type="text" id="workdirpath">
+            <input type="button" id="workdirbutton" value="select">
+        </div>
+        <div>
+            <label>editor: </label>
+            <input type="text" id="editorpath">
+            <input type="button" id="editorbutton" value="select">
+            <input type="file" id="editorselect" value="edit" style="visibility:hidden;">
+        </div>
+        <div>
+            <input type="button" id="saveconfig" value="save">
+        </div>
     </div>
 
     <div class="tabContents" id="treeView">
-        <label id="editor">editor</label>
-        <select name="editor">
-            <option> gvim
-            <option> emacs
-            <option selected> notepad
-        </select><br>
+        <div>
+            <input type="button" id="refreshTree" value="refresh">
+        </div>
         <div id="treeViewArea"></div>
     </div>
 

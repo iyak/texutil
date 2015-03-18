@@ -11,7 +11,6 @@ var openExternally = function(fullpath)
      * function, in which already opened files would be opened again.
      * but is it really necessary?
      */
-    var editor = $("select[name='editor'] option:selected").text();
     var filename = fullpath.replace(/^.*[\\\/]/, '');
     var wshShell = new ActiveXObject("WScript.Shell");
     if (true == wshShell.appActivate(filename)) {
@@ -67,8 +66,9 @@ var refreshTreeView = function()
 
         /* readonly as ascii */
         var textFile = fso.OpenTextFile(fileObj.path, 1/* readonly */, false/* create? */, 0/* ascii */);
-        var node = {id: fileObj.path, text: fileObj.name, children: [], state: {opened: true}};
-        var hasSibling = []
+        var name = fileObj.path.replace(workingDir.path + '\\', "");
+        var node = {id: fileObj.path, text: name, children: [], state: {opened: true}};
+        var hasSibling = [];
         while(!textFile.atEndOfStream) {
             /* read line by line */
             var line = textFile.readLine();
@@ -97,9 +97,13 @@ var refreshTreeView = function()
                     isChild[childObj.path] = true;
                     node.children.push(dfsTexDependency(childObj));
                 }
-                else { /* do nothing */ }
+                else {
+                    continue; /* do nothing */
+                }
             }
-            else { /* do nothing -- should I alert? */ }
+            else {
+                continue; /* do nothing -- should I alert? */ ;
+            }
         }
         return(node);
     }
@@ -109,6 +113,17 @@ var refreshTreeView = function()
     /* erase from root the nodes which are children of some other nodes */
     nodes = $.grep(nodes, function(node) {return(undefined === isChild[node.id]);});
     
-    /* pass node information to jstree */
-    $('#treeViewArea').jstree({core: {multiple: false, data: nodes}});
+    /* pass node information to jstree
+     * and reconstruct the whole tree.
+     *
+     * what i only need to do is, according to API,
+     * $(..).jstree(true).settings.core.data = nodes;
+     * $(..).jstree(true).redraw(true);
+     *
+     * but this does not work at all.
+     */
+    $("#treeViewArea").jstree("destroy");
+    $("#treeViewArea").jstree({core: {multiple: false, data: nodes, state: {opened: true}}});
+    $("#treeViewArea").on("activate_node.jstree", function(e, data){openExternally(data.node.id); return(false);});
+
 }

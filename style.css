@@ -13,13 +13,6 @@ body {
     width: 100%;
     height: 500px;
 }
-.treeViewFile .filename {
-    display: inline-block;
-    position: relative;
-}
-.treeViewFile .filename:hover {
-    font-weight: bold;
-}
 div#complileOption div, div#ping div{
     margin-bottom: 10px;
 }
