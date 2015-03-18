@@ -69,11 +69,29 @@ var refreshTreeView = function()
         var name = fileObj.path.replace(workingDir.path + '\\', "");
         var node = {id: fileObj.path, text: name, children: [], state: {opened: true}};
         var hasSibling = [];
+        var commentMode = false;
         while(!textFile.atEndOfStream) {
             /* read line by line */
             var line = textFile.readLine();
             /* match input or include (or includegraphics??) */
-            /* TODO?: support comment-out handling */
+            /* ignore characters after %, not folloing \(escape) */
+            line = line.replace(/([^\\])%.+$/,"$1");
+            line = line.replace(/^%.+$/,"");
+
+            /* latex is not cleaver enough to understand nested comment block.
+             * neather do i.
+             */
+            if (-1 != line.search(/\\begin *\{ *comment *\}/)) {
+                commentMode = true;
+            }
+            if (-1 != line.search(/\\end *\{ *comment *\}/)) {
+                commentMode = false;
+            }
+            line = line.replace(/\\begin *\{ *comment *\}.*?\\end *\{ *comment *\}/,""); /* in one line */
+            if (commentMode) {
+                continue;
+            }
+
             var child;
             var inputRegexp = /\\input *\{ *(.+?) *\}/g;
             var includeRegexp = /\\include *\{ *(.+?) *\}/g;
@@ -113,17 +131,23 @@ var refreshTreeView = function()
     /* erase from root the nodes which are children of some other nodes */
     nodes = $.grep(nodes, function(node) {return(undefined === isChild[node.id]);});
     
-    /* pass node information to jstree
-     * and reconstruct the whole tree.
+    /* pass node information to jstree and reconstruct the whole tree.
      *
      * what i only need to do is, according to API,
      * $(..).jstree(true).settings.core.data = nodes;
      * $(..).jstree(true).redraw(true);
      *
      * but this does not work at all.
+     * and this "destroy" breaks expand/collapse function!
      */
     $("#treeViewArea").jstree("destroy");
-    $("#treeViewArea").jstree({core: {multiple: false, data: nodes, state: {opened: true}}});
+    $("#treeViewArea").jstree({
+        core: {
+            themes: {icons: false},
+            multiple: false,
+            data: nodes,
+            state: {opened: true}
+        }
+    });
     $("#treeViewArea").on("activate_node.jstree", function(e, data){openExternally(data.node.id); return(false);});
-
 }

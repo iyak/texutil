@@ -77,10 +77,10 @@ $(function() {
     $(".controlPanelTabs").each(function(i){ $(this).on("click", function(){activateTab(i); return(false);});});
     $("input[value='ping']").on("click", function(){goPing(); return(false);});
     $("#treeView").on("beforeShow", function(){refreshTreeView(); return(false);});
+    $("#refreshTree").on("click", function() {refreshTreeView(); return(false);});
     $("#workdirbutton").on("click", function(){selectWorkdir(); return (false);});
     $("#editorbutton").on("click", function() {selectEditor(); return(false);});
     $("#saveconfig").on("click", function() {saveConfig(); return(false);});
-    $("#refreshTree").on("click", function() {refreshTreeView(); return(false);});
 });
 /* jQuery extension */
 $(function($) {
