@@ -27,17 +27,15 @@ var definitelyOpen = function(fullpath) {
 var drawTree = function(nodes) {
     $("#treeViewArea").empty();
     var drawTreeRec = function(dad, deapth) {
-        var style_mark = "margin-left:" + deapth * 30;
         var expand_mark = "";
         if (0 < dad.children.length) {
             expand_mark = dad.expand? "- ": "+ ";
         }
-        var div = "<div class=\"filenode"
-            + "\" index=\"" + dad.id + "\">"
-            + "<span class=\"mark\" style=\"" + style_mark
-            + "\">" + expand_mark + "</span>"
-            + "<span class=\"name"
-            + "\">" + dad.text + "</span></div>";
+        var div = "<div class=\"filenode\""
+            + " index=\"" + dad.id + "\""
+            + " style=\"padding-left:" + deapth * 30 + "\">"
+            + "<span class=\"mark\">" + expand_mark + "</span>"
+            + "<span class=\"name\">" + dad.text + "</span></div>";
         $("#treeViewArea").append(div);
         /* bind click event to file-open */
         if (dad.expand) {
