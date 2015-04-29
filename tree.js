@@ -27,14 +27,14 @@ var definitelyOpen = function(fullpath) {
 var drawTree = function(nodes) {
     $("#treeViewArea").empty();
     var drawTreeRec = function(dad, deapth) {
-        var style = "margin-left:" + deapth * 30;
+        var style_mark = "margin-left:" + deapth * 30;
         var expand_mark = "";
         if (0 < dad.children.length) {
             expand_mark = dad.expand? "- ": "+ ";
         }
         var div = "<div class=\"filenode"
             + "\" index=\"" + dad.id + "\">"
-            + "<span class=\"mark\" style=\"" + style
+            + "<span class=\"mark\" style=\"" + style_mark
             + "\">" + expand_mark + "</span>"
             + "<span class=\"name"
             + "\">" + dad.text + "</span></div>";
@@ -62,6 +62,15 @@ var drawTree = function(nodes) {
         }
         drawTree(nodes);
     });
+    $(".filenode").on({
+        "mouseenter": function() {
+            var i = $(this).attr("index");
+            $(".filenode[index=\"" + i + "\"]>.name").css("background-color", "yellow");
+        },
+        "mouseleave": function() {
+            var i = $(this).attr("index");
+            $(".filenode[index=\"" + i + "\"]>.name").css("background-color", "white");
+        }});
 }
 var constructTree = function() {
     /* construct tree structure. each node have properties below.
