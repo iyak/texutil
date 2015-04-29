@@ -70,6 +70,24 @@ var drawTree = function(nodes) {
             $(".filenode[index=\"" + i + "\"]>.name").css("background-color", "white");
         }});
 }
+function rel2absPath(base, relative) {
+    var stack = base.split("\\");
+    var parts = relative.split("\\");
+    /*
+     * remove current file name (or empty string)
+     * (omit if "base" is the current folder without trailing slash)
+     */
+    stack.pop();
+    for (var i=0; i<parts.length; i++) {
+        if (parts[i] == ".")
+            continue;
+        if (parts[i] == "..")
+            stack.pop();
+        else
+            stack.push(parts[i]);
+    }
+    return stack.join("\\");
+}
 var constructTree = function() {
     /* construct tree structure. each node have properties below.
      * node.text: text to be displayed.
@@ -95,8 +113,28 @@ var constructTree = function() {
         var fullpath = fo.path;
         return fullpath2id[fullpath];
     }
-    var is_root = new Array();
+    var nodes = new Array();
 
+    var addNode = function(fileObj) {
+        fullpath2id[fileObj.path] = id2fileobj.length;
+        id2fileobj.push(fileObj);
+        if (0 == fileObj.path.indexOf(workingDir.path)) {
+            text = fileObj.path.substring(workingDir.path.length + 1);
+        }
+        else {
+            text = fileObj.path;
+        }
+        var node = {
+            id: nodes.length,
+            text: text,
+            path: fileObj.path,
+            children: new Array(),
+            expand: true,
+            is_root: true
+        };
+        nodes.push(node);
+        return nodes.length - 1;
+    }
     /* get array of all tex files under the working directory */
     var dfsListFiles = function(folderObj) {
         var fileCollector = new Enumerator(folderObj.files);
@@ -108,9 +146,7 @@ var constructTree = function() {
                  */
                 continue;
             }
-            fullpath2id[fileObj.path] = id2fileobj.length;
-            id2fileobj.push(fileObj);
-            is_root.push(true);
+            addNode(fileObj);
         }
         var folderCollector = new Enumerator(folderObj.subFolders);
         for (; !folderCollector.atEnd(); folderCollector.moveNext()) {
@@ -120,18 +156,9 @@ var constructTree = function() {
     }
     dfsListFiles(workingDir);
 
-    var n = id2fileobj.length;
-    var nodes = new Array();
-    for (var i = 0; i < n; ++ i) {
+    for (var i = 0; i < nodes.length; ++ i) {
         var fo = id2fileobj[i];
-        var node = {
-            id: i,
-            text: fo.name,
-            path: fo.path,
-            children: new Array(),
-            expand: true,
-            is_root: true
-        };
+        var text;
         var tex = fso.OpenTextFile(fo.path, 1/* readonly */, false/* create? */, 0/* ascii */);
         var comment = false;
         while(!tex.atEndOfStream) {
@@ -158,6 +185,7 @@ var constructTree = function() {
             var child;
             var inputRegexp = /\\input *\{ *(.+?) *\}/g;
             var includeRegexp = /\\include *\{ *(.+?) *\}/g;
+            var includegRegexp = /\\includegraphics *\[.*?\] *\{ *(.+?) *\}/g;
             if (undefined != (child = inputRegexp.exec(line))) {
                 child = child[1]; /* [0] is whole matched string */
                 /* input{} allows extension be missed */
@@ -168,19 +196,32 @@ var constructTree = function() {
             else if (undefined != (child = includeRegexp.exec(line))) {
                 child = child[1];
             }
+            else if (undefined != (child = includegRegexp.exec(line))) {
+                /*
+                 * latex does not require an extension when using includegraphics.
+                 * TODO: implement this. (now texutil requires an extension)
+                 */
+                child = child[1];
+            }
             else { /* nothing hit */
                 continue;
             }
-            var childPath = fo.ParentFolder.path + "/" + child;
-            var id = path2id(childPath);
-            if (-1 == node.children.indexOf(id))
-                node.children.push(id);
-            is_root[id] = false;
+            var cfo;
+            if (-1 == child.indexOf(":")) { /* relative */
+                var cfo = fso.getFile(rel2absPath(fo.path, child));
+            }
+            else { /* absolute */
+                var cfo = fso.getFile(child);
+            }
+            var id = path2id(cfo.path);
+            if (undefined == id) {
+                id = addNode(cfo);
+            }
+            if (-1 == nodes[i].children.indexOf(id)) {
+                nodes[i].children.push(id);
+            }
+            nodes[id].is_root = false;
         }
-        nodes.push(node);
-    }
-    for (var i = 0; i < nodes.length; ++ i) {
-        nodes[i].is_root = is_root[nodes[i].id];
     }
     return nodes;
 }
