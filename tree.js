@@ -72,7 +72,7 @@ var drawTree = function(nodes) {
 }
 function rel2absPath(base, relative) {
     var stack = base.split(/[\/\\]/);
-    var parts = relative.split("\/\\");
+    var parts = relative.split(/[\/\\]/);
     /*
      * remove current file name (or empty string)
      * (omit if "base" is the current folder without trailing slash)
