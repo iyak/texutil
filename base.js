@@ -109,7 +109,6 @@ $(function(){
             if (from < 0) {
                 from += len;
             }
-
             for (; from < len; from++) {
                 if (from in this &&
                     this[from] === elt)

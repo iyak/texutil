@@ -208,9 +208,18 @@ var constructTree = function() {
             }
             var cfo;
             if (-1 == child.indexOf(":")) { /* relative */
+                var apath = rel2absPath(fo.path, child);
+                if (fso.FileExists(apath) == false) {
+                    alert ("no such file: " + apath + "\ninput from: " + fo.path);
+                    continue;
+                }
                 var cfo = fso.getFile(rel2absPath(fo.path, child));
             }
             else { /* absolute */
+                if (fso.FileExists(child) == false) {
+                    alert ("no such file: " + child + "\ninput from: " + fo.path);
+                    continue;
+                }
                 var cfo = fso.getFile(child);
             }
             var id = path2id(cfo.path);
