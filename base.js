@@ -1,4 +1,7 @@
 var workdir;
+var mainpath;
+var homeoption;
+
 var editor;
 
 var activateTab = function(i)
@@ -10,10 +13,21 @@ var activateTab = function(i)
     $(".controlPanelTabs:eq(" + i + ")").prop("disabled", true);
     $(".controlPanelTabs:not(:eq(" + i + "))").prop("disabled", false);
 }
+var setHomeOption = function(option)
+{
+    $("#homeoption").prop("checked", false);
+    $("#homeoption[value=" + option + "]").prop("checked", true);
+    homeoption = option;
+}
 var setWorkdir = function(path)
 {
     $("#workdirpath").val(path);
     workdir = path;
+}
+var setMainFile = function(path)
+{
+    $("#mainpath").val(path);
+    mainpath = path;
 }
 var setEditor = function(path)
 {
@@ -27,6 +41,14 @@ var selectWorkdir = function()
     var oFolderItem = objFolder.Items().Item();
     setWorkdir(oFolderItem.Path);
 }
+var selectMainFile = function()
+{
+    $("#mainselect").trigger("click");
+    var path = $("#mainselect").val();
+    $("#mainpath").val(path);
+    setMainFile(path);
+
+}
 var selectEditor = function()
 {
     $("#editorselect").trigger("click");
@@ -37,10 +59,14 @@ var selectEditor = function()
 var saveConfig = function()
 {
     workdir = $("#workdirpath").val();
+    mainpath = $("#mainpath").val();
     editor = $("#editorpath").val();
+    homeoption = $("#homeoption:checked").attr("value");
     var fso = new ActiveXObject("Scripting.FileSystemObject");
     var configFile = fso.OpenTextFile("./config", 2/* write only */, true/* create? */, 0/* ascii */);
+    configFile.writeLine("homeoption=" + homeoption);
     configFile.writeLine("workdir=" + workdir);
+    configFile.writeLine("mainpath=" + mainpath);
     configFile.writeLine("editor="  + editor);
     configFile.close();
 }
@@ -55,15 +81,28 @@ $(function() {
         var line = configFile.readLine();
         var config = line.split('=', 2);
         switch(config[0]) {
+            case "homeoption":
+                setHomeOption(config[1]);
+                break;
             case "workdir":
                 setWorkdir(config[1]);
+                break;
+            case "mainpath":
+                setMainFile(config[1]);
                 break;
             case "editor":
                 setEditor(config[1]);
                 break;
         }
     }
-    if (undefined === workdir || "undefined" == workdir) {
+    if (undefined === homeoption || "undefined" == homeoption) {
+        setHomeOption("workdir");
+    }
+    if ("mainpath" == homeoption && (undefined === mainpath || "undefined" == mainpath || "" == mainpath)) {
+        alert("select main file");
+        selectMainFile();
+    }
+    if ("workdir" == homeoption && (undefined === workdir || "undefined" == workdir || "" == workdir)) {
         alert("select working directory");
         selectWorkdir(); /* global */
     }
@@ -79,6 +118,7 @@ $(function() {
     $("#refreshTree").on("click", function() {refreshTreeView(); return(false);});
     $("#workdirbutton").on("click", function(){selectWorkdir(); return (false);});
     $("#editorbutton").on("click", function() {selectEditor(); return(false);});
+    $("#mainbutton").on("click", function() {selectMainFile(); return(false);});
     $("#saveconfig").on("click", function() {saveConfig(); return(false);});
 });
 /* js extension */
@@ -116,5 +156,8 @@ $(function(){
             }
             return -1;
         };
+    }
+    String.prototype.repeat = function(num) {
+        return new Array(num + 1).join(this);
     }
 });

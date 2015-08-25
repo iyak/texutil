@@ -16,3 +16,6 @@ body {
 div#complileOption div, div#ping div{
     margin-bottom: 10px;
 }
+
+img {max-height:100%; max-width:auto;}
+span.name {margin-left:5px;}

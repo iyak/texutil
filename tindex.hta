@@ -16,81 +16,41 @@
 <div id="controlPanel">
     <input class="controlPanelTabs" type="button" value="Home">
     <input class="controlPanelTabs" type="button" value="Tree View">
-    <input class="controlPanelTabs" type="button" value="Compile">
-    <input class="controlPanelTabs" type="button" value="Version Control">
-    <input class="controlPanelTabs" type="button" value="Gallery">
-    <input class="controlPanelTabs" type="button" value="Labels">
-    <input class="controlPanelTabs" type="button" value="Information">
 </div>
 <div id="tabControl">
     <div class="tabContents" id="home">
         <div>
-            <label>working directory: </label>
-            <input type="text" id="workdirpath">
-            <input type="button" id="workdirbutton" value="select">
+            <input type="radio" id="homeoption" name="homeoption" value="workdir">choose working directory</input>
+            <div>
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="workdirpath">
+                <input type="button" id="workdirbutton" value="select">
+            </div>
+            <p>
+            <input type="radio" id="homeoption" name="homeoption" value="mainpath">choose main file</input>
+            <div>
+                &nbsp;&nbsp;&nbsp;
+                <input type="text" id="mainpath">
+                <input type="button" id="mainbutton" value="select">
+                <input type="file" id="mainselect" value="edit" style="visibility:hidden;">
+            </div>
         </div>
+        <p>
         <div>
             <label>editor: </label>
             <input type="text" id="editorpath">
             <input type="button" id="editorbutton" value="select">
             <input type="file" id="editorselect" value="edit" style="visibility:hidden;">
         </div>
+        <p>
         <div>
             <input type="button" id="saveconfig" value="save">
         </div>
     </div>
-
     <div class="tabContents" id="treeView">
         <div>
             <input type="button" id="refreshTree" value="refresh">
         </div>
         <div id="treeViewArea"></div>
-    </div>
-
-    <div class="tabContents" id="complile">
-        <p>(!) this tab may not be necessary. only to compose well-working makefile is requested.</p>
-        <form name="make">
-            <div class="target">
-                <label> target: </label>
-                <input type="radio" name="target" value="dvi" checked/>dvi
-                <input type="radio" name="target" value="pdf"/>pdf
-                <input type="radio" name="target" value="clean"/>clean
-            </div>
-            <div class="parallel">
-                <label> parallel: </label>
-                <input type="text" name="parallel" value="4"/>
-            </div>
-            <div class="open">
-                <label> open after compilation? </label>
-                <input type="checkbox" name="open">
-            </div>
-            <div class="mode">
-                <label> mode: </label>
-                <select name="mode">
-                    <option selected> draft
-                    <option> conference
-                    <option> journal
-                </select>
-            </div>
-            <div>
-                <input type="button" value="make"/>
-            </div>
-            <div>
-                <input type="reset" value="default"/>
-            </div>
-        </form>
-    </div>
-    <div class="tabContents" id="versionControl">
-        <p>(!) this tab may not be necessary. she is willing to learn git.</p>
-    </div>
-    <div class="tabContents" id="gallery">
-        <p>(!) preview of .odt, .pdf, .eps etc. difficult to implement in this component.</p>
-    </div>
-    <div class="tabContents" id="labels">
-        <p>(!) just list up defined labels in the .tex files.</p>
-    </div>
-    <div class="tabContents" id="information">
-        <p>some information here.</p>
     </div>
 </div>
 </body>

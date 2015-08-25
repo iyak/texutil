@@ -26,27 +26,31 @@ var definitelyOpen = function(fullpath) {
 }
 var drawTree = function(nodes) {
     $("#treeViewArea").empty();
-    var drawTreeRec = function(dad, deapth) {
+    var drawTreeRec = function(dad, deapth, last, prefix) {
         var expand_mark = "";
         if (0 < dad.children.length) {
             expand_mark = dad.expand? "- ": "+ ";
         }
-        var div = "<div class=\"filenode\""
-            + " index=\"" + dad.id + "\""
-            + " style=\"padding-left:" + deapth * 30 + "\">"
-            + "<span class=\"mark\">" + expand_mark + "</span>"
+        var div = "<div class=\"filenode\" style=\"height:16px\""
+            + " index=\"" + dad.id + "\">"
+            + prefix
+            + (last? "<img src=\"2.bmp\">": "<img src=\"0.bmp\">")
+            + (dad.expand? "<img src=\"4.bmp\" class=\"mark\">": "<img src=\"5.bmp\" class=\"mark\">")
             + "<span class=\"name\">" + dad.text + "</span></div>";
         $("#treeViewArea").append(div);
         /* bind click event to file-open */
         if (dad.expand) {
             for (var i = 0; i < dad.children.length; ++ i) {
-                drawTreeRec(nodes[dad.children[i]], deapth + 1);
+                drawTreeRec(nodes[dad.children[i]], deapth + 1, (dad.children.length-1 == i), prefix + (last? "<img src=\"3.bmp\">": "<img src=\"1.bmp\">"))
             }
         }
     }
-    for (var i = 0; i < nodes.length; ++ i) {
+    var rootnum = 0;
+    for (var i = 0; i < nodes.length; ++ i) if (nodes[i].is_root) ++ rootnum;
+    for (var i=0, j=0; j < rootnum; ++ i) {
         if (nodes[i].is_root) {
-            drawTreeRec(nodes[i], 0);
+            ++ j;
+            drawTreeRec(nodes[i], 0, (rootnum == j), "");
         }
     }
     $(".filenode .name").on("click", function() {
@@ -99,6 +103,7 @@ var constructTree = function() {
      */
     var fso = new ActiveXObject("Scripting.FileSystemObject");
     var workingDir = fso.getFolder(workdir);
+    var mainFile = fso.getFile(mainpath);
 
     /*
      * the way to treat files is,
@@ -154,7 +159,12 @@ var constructTree = function() {
         }
         return;
     }
-    dfsListFiles(workingDir);
+    homeoption = $("#homeoption:checked").attr("value");
+    if ("workdir" == homeoption) {
+        dfsListFiles(workingDir);
+    } else {
+        addNode(mainFile);
+    }
 
     for (var i = 0; i < nodes.length; ++ i) {
         var fo = id2fileobj[i];
@@ -188,7 +198,7 @@ var constructTree = function() {
             var includegRegexp = /\\includegraphics *\[.*?\] *\{ *(.+?) *\}/g;
             if (undefined != (child = inputRegexp.exec(line))) {
                 child = child[1]; /* [0] is whole matched string */
-                /* input{} allows extension be missed */
+                /* input{} allows extension to be missed */
                 if ("" == fso.GetExtensionName(child)) {
                     child = child + ".tex";
                 }
