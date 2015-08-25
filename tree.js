@@ -102,8 +102,22 @@ var constructTree = function() {
      * node.is_root: boolean whether to be a child of any nodes.
      */
     var fso = new ActiveXObject("Scripting.FileSystemObject");
-    var workingDir = fso.getFolder(workdir);
-    var mainFile = fso.getFile(mainpath);
+    homeoption = $("#homeoption:checked").attr("value");
+    var workingDir, mainFile
+    if ("workdir" == homeoption) {
+        if (undefined === workdir || "undefined" == workdir || "" == workdir) {
+            alert ("select working directory");
+            selectWorkdir();
+        }
+        workingDir = fso.getFolder(workdir);
+    } else {
+        if (undefined === mainpath || "undefined" == mainpath || "" == mainpath) {
+            alert ("select main file");
+            selectMainFile();
+        }
+        mainFile = fso.getFile(mainpath);
+        workingDir = fso.getFolder(fso.getParentFolderName(mainpath));
+    }
 
     /*
      * the way to treat files is,
@@ -159,7 +173,6 @@ var constructTree = function() {
         }
         return;
     }
-    homeoption = $("#homeoption:checked").attr("value");
     if ("workdir" == homeoption) {
         dfsListFiles(workingDir);
     } else {

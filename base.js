@@ -10,8 +10,6 @@ var activateTab = function(i)
         if (i == $(this).index()) $(this).show();
         else $(this).hide();
     });
-    $(".controlPanelTabs:eq(" + i + ")").prop("disabled", true);
-    $(".controlPanelTabs:not(:eq(" + i + "))").prop("disabled", false);
 }
 var setHomeOption = function(option)
 {
