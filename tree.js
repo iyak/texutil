@@ -36,7 +36,7 @@ var drawTree = function(nodes) {
             + prefix
             + (last? "<img src=\"2.bmp\">": "<img src=\"0.bmp\">")
             + (dad.expand? "<img src=\"4.bmp\" class=\"mark\">": "<img src=\"5.bmp\" class=\"mark\">")
-            + "<div class=\"name\">" + dad.text + "</div></div>";
+            + "<div class=\"name\" title=\"" + dad.path + "\">" + dad.text + "</div></div>";
         $("#treeViewArea").append(div);
         /* bind click event to file-open */
         if (dad.expand) {
