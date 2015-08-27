@@ -45,7 +45,6 @@ var selectMainFile = function()
     var path = $("#mainselect").val();
     $("#mainpath").val(path);
     setMainFile(path);
-
 }
 var selectEditor = function()
 {

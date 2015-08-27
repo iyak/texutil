@@ -31,12 +31,12 @@ var drawTree = function(nodes) {
         if (0 < dad.children.length) {
             expand_mark = dad.expand? "- ": "+ ";
         }
-        var div = "<div class=\"filenode\" style=\"height:16px\""
+        var div = "<div class=\"filenode\""
             + " index=\"" + dad.id + "\">"
             + prefix
             + (last? "<img src=\"2.bmp\">": "<img src=\"0.bmp\">")
             + (dad.expand? "<img src=\"4.bmp\" class=\"mark\">": "<img src=\"5.bmp\" class=\"mark\">")
-            + "<span class=\"name\">" + dad.text + "</span></div>";
+            + "<div class=\"name\">" + dad.text + "</div></div>";
         $("#treeViewArea").append(div);
         /* bind click event to file-open */
         if (dad.expand) {
